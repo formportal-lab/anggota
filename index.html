@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DB KTA → Member</title>
+
+<style>
+  body {
+    font-family: system-ui, Segoe UI, Roboto, Arial;
+    margin: 18px;
+    max-width: 800px;
+    background: none;
+    color: #fff;
+  }
+
+  button, input {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  /* ===== CSS neon glow untuk login ===== */
+  #loginScreen {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    padding: 40px;
+    background: #111;
+    box-shadow: 0 0 20px rgba(0,255,255,0.3);
+  }
+  #loginScreen::before {
+    content: '';
+    position: absolute;
+    top: -2px; left: -2px; right: -2px; bottom: -2px;
+    border-radius: 14px;
+    background: linear-gradient(90deg, #00f, #0ff, #00f, #0ff);
+    background-size: 300% 300%;
+    z-index: 0;
+    filter: blur(6px);
+    animation: neonGlow 4s linear infinite;
+  }
+  @keyframes neonGlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  #loginScreen > * {
+    position: relative;
+    z-index: 1;
+    color: white;
+  }
+
+  /* ===== Kotak Link Setelah Login ===== */
+  .link-box-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin: 40px 0;
+    justify-content: center;
+  }
+  .link-box {
+    background: linear-gradient(135deg, #111, #333);
+    border: 2px solid #0ff;
+    color: #0ff;
+    border-radius: 12px;
+    padding: 20px;
+    width: 180px;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(0,255,255,0.3);
+    transition: all 0.3s ease;
+    font-weight: bold;
+  }
+  .link-box:hover {
+    background: linear-gradient(135deg, #0ff, #00f);
+    color: white;
+    box-shadow: 0 0 25px #0ff, 0 0 50px #00f;
+    transform: scale(1.05);
+  }
+
+  /* ===== Tombol Logout ===== */
+  #logoutBtn {
+    background:#f33;
+    color:white;
+    width:200px;
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    font-size:16px;
+    margin-bottom:30px;
+  }
+
+  /* ===== RESPONSIF UNTUK MOBILE & ANDROID ===== */
+  @media (max-width: 768px) {
+    body {
+      margin: 10px;
+      background: none;
+      color: #eee;
+    }
+
+    #loginScreen {
+      padding: 25px;
+    }
+
+    input, button {
+      font-size: 18px;
+      padding: 12px;
+    }
+
+    h2 {
+      font-size: 22px;
+    }
+
+    .link-box {
+      width: 100%;
+      padding: 18px;
+      font-size: 18px;
+    }
+
+    #logoutBtn {
+      width: 90%;
+      font-size: 18px;
+    }
+  }
+
+  /* Efek klik responsif untuk sentuhan */
+  button:active, .link-box:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== Layar Login Admin ===== -->
+<div id="loginScreen" style="text-align:center;">
+  <h2>🔐 Login Admin</h2>
+  <input type="password" id="adminPass" placeholder="Masukkan password admin">
+  <button onclick="checkLogin()">Login</button>
+  <p id="loginMsg" style="color:red;"></p>
+</div>
+
+<!-- ===== Konten Utama Setelah Login ===== -->
+<div id="mainContent" style="display:none; text-align:center;">
+  <p style="font-weight: bold;">𝐓𝐎𝐓𝐀𝐋 𝐃𝐀𝐅𝐓𝐀𝐑 𝐀𝐍𝐆𝐆𝐎𝐓𝐀 𝐎𝐌𝐊 𝐘𝐀𝐍𝐆 𝐓𝐄𝐑𝐋𝐈𝐁𝐀𝐓 𝐃𝐀𝐋𝐀𝐌 𝐊𝐄𝐀𝐍𝐆𝐆𝐎𝐓𝐀𝐀𝐍 𝐇𝐃𝐒</p>
+  
+  <div class="link-box-container">
+    <div class="link-box" onclick="window.open('https://docs.google.com/spreadsheets/d/1iMx_G3LOkkJdI_drbi8DotHp9BQhPgfcIyjuv_g4Y-w/edit?usp=sharing')">
+      🌐 Lihat selanjutnya
+    </div>
+  </div>
+
+  <button id="logoutBtn">Logout</button>
+</div>
+
+<script>
+  const ADMIN_PASS = "hdsadmin1@";
+  const LOGIN_KEY = "kta_login_ok";
+  const $ = id => document.getElementById(id);
+
+  // ===== LOGIN =====
+  function checkLogin() {
+    const pass = $('adminPass').value;
+    if (pass === ADMIN_PASS) {
+      localStorage.setItem(LOGIN_KEY, "true");
+      $('loginScreen').style.display = "none";
+      $('mainContent').style.display = "block";
+    } else {
+      $('loginMsg').textContent = "Password salah!";
+    }
+  }
+
+  // ===== LOGOUT =====
+  $('logoutBtn').addEventListener('click', () => {
+    localStorage.removeItem(LOGIN_KEY);
+    $('loginScreen').style.display = "block";
+    $('mainContent').style.display = "none";
+    $('adminPass').value = '';
+  });
+
+  // ===== AUTO LOGIN (Jika Masih Login) =====
+  if (localStorage.getItem(LOGIN_KEY) === "true") {
+    $('loginScreen').style.display = "none";
+    $('mainContent').style.display = "block";
+  }
+
+  // ===== PENYESUAIAN OTOMATIS UNTUK MOBILE / ANDROID =====
+  if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+    document.body.style.zoom = "1.05"; // sedikit perbesar di layar kecil
+    document.body.style.background = "#000";
+    document.querySelectorAll("button, input").forEach(el => {
+      el.style.fontSize = "18px";
+      el.style.padding = "12px";
+    });
+  }
+</script>
+
+</body>
+</html>
